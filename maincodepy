@@ -1,0 +1,120 @@
+from otree.api import *
+
+
+doc = """
+This is a one-shot "Prisoner's Dilemma". Two players are asked separately
+whether they want to cooperate or defect. Their choices directly determine the
+payoffs.
+"""
+
+
+class C(BaseConstants):
+    NAME_IN_URL = 'staghunt_game'
+    PLAYERS_PER_GROUP = 2
+    NUM_ROUNDS = 1
+    INSTRUCTIONS_TEMPLATE = 'staghuntjb/instructions.html'
+    stag_match_payoff = cu(4)
+    stag_mismatch_payoff = cu(0)
+    h_1_hare_payoff = cu(1)
+    players_per_group = 2
+
+    
+
+
+class Subsession(BaseSubsession):
+    pass
+    #def creating_session(self):
+    #    return fixed_id_in_group
+
+
+class Group(BaseGroup):
+
+     def h_2_hare_payoff(self):
+        if self.round_number <= 3:
+            h_2_hare_payoff = cu(2)
+        else:
+            h_2_hare_payoff = cu(3)
+        return h_2_hare_payoff
+
+def set_payoffs(self):
+        h_1 = self.get_player_by_role('Hunter_1')
+        h_2 = self.get_player_by_role('Hunter_2')
+        if h_1.hschoice == 'hare' and h_2.hschoice == 'hare':
+            h_1.payoff = C.h_1_hare_payoff
+            h_2.payoff = self. h_2_hare_payoff()
+        else:
+            if h_1.hschoice == 'hare' and h_2.hschoice == 'stag':
+                h_1.payoff = C.h_1_hare_payoff
+                h_2.payoff = C.stag_mismatch_payoff
+            else:
+                if h_1.hschoice == 'stag' and h_2.hschoice == 'hare':
+                    h_1.payoff = C.stag_mismatch_payoff
+                    h_2.payoff = self. h_2_hare_payoff()
+                else:
+                    h_1.payoff = C.stag_match_payoff
+                    h_2.payoff = C.stag_match_payoff
+
+
+class Player( BasePlayer):
+    hschoice = models.BooleanField(
+        choices=['stag', 'hare'],
+        doc="""This player's decision is either stag or hare""",
+        widget=widgets.RadioSelect,
+            )
+
+    def role(self):
+       if self.id_in_group == 1:
+           return 'Hunter_1'
+       if self.id_in_group == 2:
+           return 'Hunter_2'
+    
+    #def other_player(self):
+        
+# FUNCTIONS
+#def set_payoffs(group: Group):
+#    for p in group.get_players():
+#        set_payoff(p)
+
+
+def other_player(player: Player):
+    return player.get_others_in_group()[0]
+
+
+#def set_payoff(player: Player):
+#    payoff_matrix = {
+#        (False, True): C.PAYOFF_A,
+#        (True, True): C.PAYOFF_B,
+#        (False, False): C.PAYOFF_C,
+#        (True, False): C.PAYOFF_D,
+#    }
+#    other = other_player(player)
+#    player.payoff = payoff_matrix[(player.cooperate, other.cooperate)]
+
+
+# PAGES
+class Introduction(Page):
+    timeout_seconds = 100
+
+
+class Decision(Page):
+    form_model = 'player'
+    form_fields = ['hschoice']
+
+
+class ResultsWaitPage(WaitPage):
+    after_all_players_arrive = set_payoffs
+
+
+class Results(Page):
+    @staticmethod
+    def vars_for_template(player: Player):
+        opponent = other_player(player)
+        return dict(
+            opponent=opponent,
+            same_choice=player.cooperate == opponent.cooperate,
+            my_decision=player.field_display('hschoice'),
+            opponent_decision=opponent.field_display('hschoice'),
+        )
+
+
+page_sequence = [Introduction, Decision, ResultsWaitPage, Results]
