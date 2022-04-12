@@ -4,7 +4,12 @@
 <p>
 You are
 {{if player.id_in_group == 1}}
-            Hunter 1 and your payoff is the first number of each cell
+            Hunter 1 and your payoff is the first number of each cell<P>
+
+            </P>
+            {{ if subsession.round_number == 3 }}
+            Hunter 2 payoff has been changed and they will now earn 3 points instead of 2 if they hare hunt
+            {{endif}}
         </p>
 
         
@@ -30,8 +35,8 @@ You are
             </tr>
             <tr>
                 <td><button name="hschoice" value="False" class="btn btn-primary btn-large">Hare</button></td>
-                <td>{{C.h_1_hare_payoff}}, 0 points</td>
-            <td>1 points, {{ if player.round_number >= 3 }}
+                <td>{{C.h_1_hare_payoff}}, 0 point</td>
+            <td>1 point, {{ if player.round_number >= 3 }}
                 3 points
             {{ else }}
                 2 points
@@ -41,7 +46,12 @@ You are
     </div>
 
 {{else}}
-Hunter 2 and your payoff is the second number of each cell
+Hunter 2 and your payoff is the second number of each cell<p>
+    
+</p>
+            {{ if subsession.round_number == 3 }}
+            your payoff has been changed and you will now earn 3 points instead of 2 if you hare hunt
+            {{endif}}
         </p>
 
     <div class="form-group required">
