@@ -17,14 +17,14 @@ class C(BaseConstants):
     h_1_hare_payoff = cu(1)
     h_2_hare_payoff = cu(2)
     INSTRUCTIONS_TEMPLATE = 'staghuntjb/instructions.html'
+   
     
     
 
 
 class Subsession(BaseSubsession):
     pass
-    #def creating_session(self):
-    #    return fixed_id_in_group
+    
 
 
 class Group(BaseGroup):
@@ -37,11 +37,6 @@ class Player( BasePlayer):
         widget=widgets.RadioSelect,
             )
 
-#def role(self):
-#        if self.id_in_group == 1:
-#            return 'Hunter_1'
-#        if self.id_in_group == 2:
-#            return 'Hunter_2'
 
 def other_player(player: Player):
     return player.get_others_in_group()[0]   
@@ -75,17 +70,6 @@ def set_payoffs(group: Group):
     
     
 
-#def set_payoff(player: Player):
-#    payoff_matrix = {
-#        (False, True): C.PAYOFF_A,
-#        (True, True): C.PAYOFF_B,
-#        (False, False): C.PAYOFF_C,
-#        (True, False): C.PAYOFF_D,
-#    }
-#    other = other_player(player)
-#    player.payoff = payoff_matrix[(player.cooperate, other.cooperate)]
-
-
 # PAGES
 
 class Introduction(Page):
@@ -108,6 +92,7 @@ class Results(Page):
             opponent=opponent,
             my_decision=player.field_display('hschoice'),
             opponent_decision=opponent.field_display('hschoice'),
+            opponent_payoff=opponent.payoff,
 
         )
 
