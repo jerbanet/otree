@@ -11,13 +11,13 @@ payoffs.
 class C(BaseConstants):
     NAME_IN_URL = 'staghunt_game'
     PLAYERS_PER_GROUP = 2
-    NUM_ROUNDS = 1
-    INSTRUCTIONS_TEMPLATE = 'staghuntjb/instructions.html'
+    NUM_ROUNDS = 5
     stag_match_payoff = cu(4)
     stag_mismatch_payoff = cu(0)
     h_1_hare_payoff = cu(1)
-    players_per_group = 2
-
+    h_2_hare_payoff = cu(2)
+    INSTRUCTIONS_TEMPLATE = 'staghuntjb/instructions.html'
+    
     
 
 
@@ -28,57 +28,52 @@ class Subsession(BaseSubsession):
 
 
 class Group(BaseGroup):
-
-     def h_2_hare_payoff(self):
-        if self.round_number <= 3:
-            h_2_hare_payoff = cu(2)
-        else:
-            h_2_hare_payoff = cu(3)
-        return h_2_hare_payoff
-
-def set_payoffs(self):
-        h_1 = self.get_player_by_role('Hunter_1')
-        h_2 = self.get_player_by_role('Hunter_2')
-        if h_1.hschoice == 'hare' and h_2.hschoice == 'hare':
-            h_1.payoff = C.h_1_hare_payoff
-            h_2.payoff = self. h_2_hare_payoff()
-        else:
-            if h_1.hschoice == 'hare' and h_2.hschoice == 'stag':
-                h_1.payoff = C.h_1_hare_payoff
-                h_2.payoff = C.stag_mismatch_payoff
-            else:
-                if h_1.hschoice == 'stag' and h_2.hschoice == 'hare':
-                    h_1.payoff = C.stag_mismatch_payoff
-                    h_2.payoff = self. h_2_hare_payoff()
-                else:
-                    h_1.payoff = C.stag_match_payoff
-                    h_2.payoff = C.stag_match_payoff
-
+    pass 
 
 class Player( BasePlayer):
     hschoice = models.BooleanField(
-        choices=['stag', 'hare'],
+        choices=[True,False],
         doc="""This player's decision is either stag or hare""",
         widget=widgets.RadioSelect,
             )
 
-    def role(self):
-       if self.id_in_group == 1:
-           return 'Hunter_1'
-       if self.id_in_group == 2:
-           return 'Hunter_2'
-    
-    #def other_player(self):
-        
-# FUNCTIONS
-#def set_payoffs(group: Group):
-#    for p in group.get_players():
-#        set_payoff(p)
-
+#def role(self):
+#        if self.id_in_group == 1:
+#            return 'Hunter_1'
+#        if self.id_in_group == 2:
+#            return 'Hunter_2'
 
 def other_player(player: Player):
-    return player.get_others_in_group()[0]
+    return player.get_others_in_group()[0]   
 
+        
+def h_2_hare_payoff(self):
+    if self.round_number <= 3:
+        h_2_hare_payoff = cu(2)
+    else:
+        h_2_hare_payoff = cu(3)
+    return h_2_hare_payoff
+
+def set_payoffs(group: Group):
+    h_1 = group.get_player_by_id(1)
+    h_2 = group.get_player_by_id(2)
+    if h_1.hschoice == True and h_2.hschoice == True:
+        h_1.payoff = C.stag_match_payoff
+        h_2.payoff = C.stag_match_payoff
+    else:
+        if h_1.hschoice == True and h_2.hschoice == False:
+            h_1.payoff = C.stag_mismatch_payoff
+            h_2.payoff = h_2_hare_payoff(h_2)
+        else:
+            if h_1.hschoice == False and h_2.hschoice == True:
+                h_1.payoff = C.h_1_hare_payoff
+                h_2.payoff = C.stag_mismatch_payoff
+            else:
+                h_1.payoff = C.h_1_hare_payoff
+                h_2.payoff = h_2_hare_payoff(h_2)
+
+    
+    
 
 #def set_payoff(player: Player):
 #    payoff_matrix = {
@@ -92,6 +87,7 @@ def other_player(player: Player):
 
 
 # PAGES
+
 class Introduction(Page):
     timeout_seconds = 100
 
@@ -102,8 +98,7 @@ class Decision(Page):
 
 
 class ResultsWaitPage(WaitPage):
-    after_all_players_arrive = set_payoffs
-
+    after_all_players_arrive = set_payoffs    
 
 class Results(Page):
     @staticmethod
@@ -111,9 +106,9 @@ class Results(Page):
         opponent = other_player(player)
         return dict(
             opponent=opponent,
-            same_choice=player.cooperate == opponent.cooperate,
             my_decision=player.field_display('hschoice'),
             opponent_decision=opponent.field_display('hschoice'),
+
         )
 
 
