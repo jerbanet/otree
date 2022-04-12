@@ -1,0 +1,80 @@
+{{ block title }}Your Choice{{ endblock }}
+{{ block content }}
+
+You are
+{{if player.id_in_group == 1}}
+            Hunter 1
+
+    <div class="form-group required">
+        <table class="table table-bordered text-center" style="width: auto; margin: auto">
+            <tr>
+                <th colspan="2" rowspan="2"></th>
+                <th colspan="2">Hunter 2</th>
+            </tr>
+            <tr>
+                <th>Stag</th>
+                <th>Hare</th>
+            </tr>
+            <tr>
+                <th rowspan="2"><span>Hunter 1</span></th>
+                <td><button name="hschoice" value="True" class="btn btn-primary btn-large">Stag</button></td>
+                <td>{{ C.stag_match_payoff }}, {{ C.stag_match_payoff }}</td>
+            <td>0, {{ if player.round_number >= 3 }}
+                3
+            {{ else }}
+                2
+            {{ endif }}</td>
+            </tr>
+            <tr>
+                <td><button name="hschoice" value="False" class="btn btn-primary btn-large">Hare</button></td>
+                <td>{{C.h_1_hare_payoff}}, 0</td>
+            <td>0, {{ if player.round_number >= 3 }}
+                3
+            {{ else }}
+                2
+            {{ endif }}</td>
+            </tr>
+        </table>
+    </div>
+
+{{else}}
+    Hunter 2
+
+    <div class="form-group required">
+        <table class="table table-bordered text-center" style="width: auto; margin: auto">
+            <tr>
+                <th colspan="2" rowspan="2"></th>
+                <th colspan="2">Hunter 2</th>
+            </tr>
+            <tr>
+                <th><button name="hschoice" value="True" class="btn btn-primary btn-large">Stag</button></th>
+                <th><button name="hschoice" value="False" class="btn btn-primary btn-large">Hare</button></th>
+            </tr>
+            <tr>
+                <th rowspan="2"><span>Hunter 1</span></th>
+                <td>Stag</button></td>
+                <td>{{ C.stag_match_payoff }}, {{ C.stag_match_payoff }}</td>
+            <td>0, {{ if player.round_number >= 3 }}
+                3
+            {{ else }}
+                2
+            {{ endif }}</td>
+            </tr>
+            <tr>
+                <td>Hare</button></td>
+                <td>{{C.h_1_hare_payoff}}, 0</td>
+            <td>0, {{ if player.round_number >= 3 }}
+                3
+            {{ else }}
+                2
+            {{ endif }}</td>
+            </tr>
+        </table>
+    </div>
+
+
+{{endif}}
+
+
+    
+{{ endblock }}
