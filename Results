@@ -1,0 +1,42 @@
+{{ block title }}Results{{ endblock }}
+{{ block content }}
+
+    <p>
+        You chose to {{if my_decision }}
+                Stag hunt
+            {{ else }}
+                Hare hunt
+            {{ endif }}
+        
+
+        and the other participant chose to {{ if opponent_decision }}
+            Stag hunt
+        {{ else }}
+            Hare hunt
+        {{ endif }}.
+        
+    </p>
+
+    <p>
+        As a result, you earned {{ player.payoff }}.
+        <p>The other hunter payoff for this round was {{ opponent_payoff }}.</p>
+    </p>
+        You have now made a total of {{participant.payoff}}
+    
+    {{ next_button }}
+
+    {{if my_decision }}
+        {{ if opponent_decision }}
+        <img src="https://i.pinimg.com/originals/74/df/16/74df163c2364f8aca07bc6ae2162948a.jpg" width="500px" />
+        {{else}}
+        <img src="http://4.bp.blogspot.com/-nAadrTv31vM/UKgwG-nTOgI/AAAAAAAAAi0/xwcrineBrbY/s1600/smiley_face_crying.jpg" width="500px" />
+    
+        {{endif}}
+    {{else}}
+
+        <img src="https://i.pinimg.com/originals/76/4f/a5/764fa5e1911b8c43fe72ff7dec17a58a.jpg" width="500px" />
+
+    {{endif}}
+
+    
+{{ endblock }}
